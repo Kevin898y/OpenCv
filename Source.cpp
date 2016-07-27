@@ -1,18 +1,34 @@
-#include <cv.h>
+﻿#include <cv.h>
 #include <highgui.h>
 using namespace std;
-
+using namespace cv;
 int main()
 {
-	IplImage *test;
-	test = cvLoadImage("D:\\1.jpg");
-	cvNamedWindow("test_demo", 1);
-	cvNamedWindow("Smooth", 1);
-	cvShowImage("test_demo",test);
-	//void cvSmooth( const CvArr* src, CvArr* dst,int smoothtype,int param1, int param2, double sigma, double param4);
-	cvSmooth(test, test, CV_GAUSSIAN, 3, 3, 5, 10);//3x3
-	cvShowImage("Smooth", test);
+	
+	Mat test;
+	test = imread("D:\\1.jpg");
+	cvNamedWindow("Orange", 1);
+	imshow("Orange", test);
+
+	vector<Mat> channels;
+	Mat imageBlueChannel;
+	Mat imageGreenChannel;
+	Mat imageRedChannel;
+	split(test, channels);
+	imageBlueChannel = channels.at(0);
+	imageGreenChannel = channels.at(1);
+	imageRedChannel = channels.at(2);
+	cvNamedWindow("imageBlueChannel", 1);
+	imshow("imageBlueChannel", imageBlueChannel);
+	cvNamedWindow("imageGreenChannel", 1);
+	imshow("imageGreenChannel", imageGreenChannel);
+	cvNamedWindow("imageRedChannel", 1);
+	imshow("imageRedChannel", imageRedChannel);
+
 	cvWaitKey(0);
-	cvDestroyWindow("test_demo");
-	cvReleaseImage(&test);
+	cvDestroyWindow("Orange");
+	cvDestroyWindow("imageBlueChannel");
+	cvDestroyWindow("imageGreenChannel");
+	cvDestroyWindow("imageRedChannel");
+	
 }
