@@ -288,23 +288,23 @@ public class FirstRender : MonoBehaviour
 
            
             //train
-            OpenCvSharp.CPlusPlus.Rect[] tree_Rect;
-            Mat tree_detction = White_thr + Blue_thr;
+            //OpenCvSharp.CPlusPlus.Rect[] tree_Rect;
+            //Mat tree_detction = White_thr + Blue_thr;
 
-            Cv2.Dilate(tree_detction, tree_detction, new Mat(), new Point(-1, -1), 3);
-            Cv2.Erode(tree_detction, tree_detction, new Mat(), new Point(-1, -1), 3);
-            tree_Rect = tree_cascade.DetectMultiScale(tree_detction, 1.1, 3, 0, new Size(50, 50));
-            Cv2.ImShow("Train_detction", tree_detction);
-            for (int i = 0; i < tree_Rect.Length; i++)
-            {
-                Point center = new Point(tree_Rect[i].X + tree_Rect[i].Width / 2, tree_Rect[i].Y + tree_Rect[i].Width / 2);
-                if (Train_num < Max_Tree_Num)
-                {
-                    Train_Center[Train_num] = center;
-                    Train_num++;
-                }
-                Cv2.Ellipse(enhance, center, new Size(tree_Rect[i].Width / 2, tree_Rect[i].Width / 2), 0, 0, 360, new Scalar(255, 0, 255), 2, OpenCvSharp.LineType.Link8, 0);
-            }
+            //Cv2.Dilate(tree_detction, tree_detction, new Mat(), new Point(-1, -1), 3);
+            //Cv2.Erode(tree_detction, tree_detction, new Mat(), new Point(-1, -1), 3);
+            //tree_Rect = tree_cascade.DetectMultiScale(tree_detction, 1.1, 3, 0, new Size(50, 50));
+            //Cv2.ImShow("Train_detction", tree_detction);
+            //for (int i = 0; i < tree_Rect.Length; i++)
+            //{
+            //    Point center = new Point(tree_Rect[i].X + tree_Rect[i].Width / 2, tree_Rect[i].Y + tree_Rect[i].Width / 2);
+            //    if (Train_num < Max_Tree_Num)
+            //    {
+            //        Train_Center[Train_num] = center;
+            //        Train_num++;
+            //    }
+            //    Cv2.Ellipse(enhance, center, new Size(tree_Rect[i].Width / 2, tree_Rect[i].Width / 2), 0, 0, 360, new Scalar(255, 0, 255), 2, OpenCvSharp.LineType.Link8, 0);
+            //}
            // Cv2.ImShow("enhance", enhance);
            // Cv2.ImWrite("enhance" + round.ToString() + ".jpg", enhance);
 
@@ -322,12 +322,12 @@ public class FirstRender : MonoBehaviour
             int[] Brown_Num = new int[contours.Length];
             for (int i = 0; i < contours.Length; i++)
             {
-                if (Cv2.ContourArea(contours[i]) > 2500 && Cv2.ContourArea(contours[i]) < 100000)
+                if (Cv2.ContourArea(contours[i]) > 1000 && Cv2.ContourArea(contours[i]) < 100000)
                 {
                     //   print(Cv2.ContourArea(contours[i]));
                     Cv2.ApproxPolyDP(InputArray.Create(contours[i]), OutputArray.Create(contours_poly[i]), Cv2.ArcLength(InputArray.Create(contours[i]), true) * 0.02, true);
-                    //  print(contours_poly[i].Count);
-                    if (contours_poly[i].Count >= 4 && contours_poly[i].Count <= 7)
+                   //  print(contours_poly[i].Count);
+                    if (contours_poly[i].Count >= 4 && contours_poly[i].Count <= 8)
                     {
                         boundRect[i] = Cv2.BoundingRect(contours_poly[i]);
                         Cv2.DrawContours(image, contours, i, new Scalar(0, 0, 255), 2, LineType.Link8, hierarchy, 0, new Point());
@@ -348,23 +348,25 @@ public class FirstRender : MonoBehaviour
             int[] Green_Num = new int[contours.Length];
             for (int i = 0; i < contours.Length; i++)
             {
-                if (Cv2.ContourArea(contours[i]) > 2500)
+                if (Cv2.ContourArea(contours[i]) > 1000)
                 {
                     Green_Num[Green_Length] = i;
                     Green_Length++;
                     Cv2.ApproxPolyDP(InputArray.Create(contours[i]), OutputArray.Create(contours_poly2[i]), Cv2.ArcLength(InputArray.Create(contours[i]), true) * 0.02, true);
-                    //print(contours_poly2[i].Count);
-                    if (contours_poly2[i].Count >= 9)
+
+                    if (contours_poly2[i].Count >= 7)
                     {
                         boundRect2[i] = Cv2.BoundingRect(contours_poly2[i]);
                         Cv2.DrawContours(image, contours, i, new Scalar(0, 0, 255), 2, LineType.Link8, hierarchy, 0, new Point());
                         Cv2.Rectangle(image, boundRect2[i].TopLeft, boundRect2[i].BottomRight, new Scalar(255, 0, 0));
                         Green_Rect[i] = boundRect2[i];
                     }
+                    else
+                        print(contours_poly2[i].Count);
 
                 }
             }
-
+            Cv2.ImWrite("enhance" + round.ToString() + ".jpg", image);
             //River
             Cv2.FindContours(Blue_thr, out contours, out hierarchy, ContourRetrieval.Tree, ContourChain.ApproxSimple, new Point(0, 0));
             List<List<Point>> contours_poly3 = new List<List<Point>>();
@@ -377,7 +379,7 @@ public class FirstRender : MonoBehaviour
             for (int i = 0; i < contours.Length; i++)
             {
                 // print(Cv2.ContourArea(contours[i]));
-                if (Cv2.ContourArea(contours[i]) > 2000)
+                if (Cv2.ContourArea(contours[i]) >1000)
                 {
                     Cv2.ApproxPolyDP(InputArray.Create(contours[i]), OutputArray.Create(contours_poly3[i]), Cv2.ArcLength(InputArray.Create(contours[i]), true) * 0.02, true);
                     //print(contours_poly3[i].Count);
@@ -406,6 +408,7 @@ public class FirstRender : MonoBehaviour
             {
                 Min = Mathf.Infinity;
                 Brown_Center = (Brown_Rect[Brown_Num[i]].BottomRight + Brown_Rect[Brown_Num[i]].TopLeft) * 0.5;
+                tree = false;
                 for (int j = 0; j < Green_Length; j++)
                 {
                     Green_Center = (Green_Rect[Green_Num[j]].BottomRight + Green_Rect[Green_Num[j]].TopLeft) * 0.5;
@@ -432,8 +435,9 @@ public class FirstRender : MonoBehaviour
                     int tx = Mathf.Max(Green_Rect[index].BottomRight.X, Brown_Rect[Brown_Num[i]].BottomRight.X);
                     int ty = Mathf.Max(Green_Rect[index].BottomRight.Y, Brown_Rect[Brown_Num[i]].BottomRight.Y);
                     Cv2.Rectangle(enhance, new Point(alltree_x, alltree_y), new Point(tx, ty), new Scalar(255,0, 255), 5);
-                    All_Tree[Tree_num] = new OpenCvSharp.CPlusPlus.Rect(alltree_x,alltree_y,tx,ty);
+                    All_Tree[Tree_num] = new OpenCvSharp.CPlusPlus.Rect(alltree_x,alltree_y,tx- alltree_x, ty- alltree_y);
                     Tree_num++;
+                  
                 }
 
             }
@@ -470,6 +474,7 @@ public class FirstRender : MonoBehaviour
                     if (Math.Abs(Tree_Center[i].X - Final_Tree_Center[j].X) < 10 && Math.Abs(Tree_Center[i].Y - Final_Tree_Center[j].Y) < 10)
                     {
                         Final_Tree_Center[j] = (Final_Tree_Center[j] + Tree_Center[i]) * 0.5;
+                        Final_All_Tree[j] = All_Tree[i];
                         Tree_Times[j]++;
                         complete = true;
                     }
@@ -483,34 +488,28 @@ public class FirstRender : MonoBehaviour
                 }
             }
             //Train
-            for (int i = 0; i < Train_num; i++)
-            {
-              //  print(round + ": " + Train_Center[i]);
-                complete = false;
-                for (int j = 0; j < Final_Train_Num; j++)
-                {
+            //for (int i = 0; i < Train_num; i++)
+            //{
+            //  //  print(round + ": " + Train_Center[i]);
+            //    complete = false;
+            //    for (int j = 0; j < Final_Train_Num; j++)
+            //    {
 
-                    if (Math.Abs(Train_Center[i].X - Final_Train_Center[j].X) < 10 && Math.Abs(Train_Center[i].Y - Final_Train_Center[j].Y) < 10)
-                    {
-                        Final_Train_Center[j] = (Final_Train_Center[j] + Train_Center[i]) * 0.5;
-                       // Trunk_Height[j]= Trunk_Height[j]+ tree_Rect[i].Height
-                        Train_Times[j]++;
-                        complete = true;
-                    }
-                }
-                if (!complete && Final_Train_Num < Max_Tree_Num)
-                {
-                    Final_Train_Center[Final_Train_Num] = Train_Center[i];
-                    Train_Times[Final_Train_Num]++;
-                    Final_Train_Num++;
-                }
-                //else if(!complete && Final_Train_Num >= Max_Tree_Num && Train_Times[Final_Train_Num%10]<6)
-                //{
-                //    Final_Train_Center[Final_Train_Num%10] = Train_Center[i];
-                //    Train_Times[Final_Train_Num]++;
-                //    Final_Train_Num++;
-                //}
-            }
+            //        if (Math.Abs(Train_Center[i].X - Final_Train_Center[j].X) < 10 && Math.Abs(Train_Center[i].Y - Final_Train_Center[j].Y) < 10)
+            //        {
+            //            Final_Train_Center[j] = (Final_Train_Center[j] + Train_Center[i]) * 0.5;
+            //           // Trunk_Height[j]= Trunk_Height[j]+ tree_Rect[i].Height
+            //            Train_Times[j]++;
+            //            complete = true;
+            //        }
+            //    }
+            //    if (!complete && Final_Train_Num < Max_Tree_Num)
+            //    {
+            //        Final_Train_Center[Final_Train_Num] = Train_Center[i];
+            //        Train_Times[Final_Train_Num]++;
+            //        Final_Train_Num++;
+            //    }
+            //}
             //    Cv2.ImShow("Fecture", image);
             //    //end = Time.time;
             //    //float t = end - start;
@@ -532,174 +531,86 @@ public class FirstRender : MonoBehaviour
             //x 90 y 50
             if (round == 9)
             {
-                Point[] Merge_Center = new Point[Max_Tree_Num];
-                int Merge_num = 0;
-                bool[] complete2= new bool[Max_Tree_Num];
-                for (int i = 0; i < Final_Train_Num; i++)
-                {
-                    if (Train_Times[i] > 6 && !complete2[i])
-                    {
-                        for (int j = 0; j < Final_Train_Num; j++)
-                        {
-                            if (j == i) continue;
-                            if ( Math.Abs(Final_Train_Center[i].X - Final_Train_Center[j].X) < 50 && Math.Abs(Final_Train_Center[i].Y - Final_Train_Center[j].Y) < 90)
-                            {
+                //print("Round");
+                //Point[] Merge_Center = new Point[Max_Tree_Num];
+                //int Merge_num = 0;
+                //bool[] complete2= new bool[Max_Tree_Num];
+                //for (int i = 0; i < Final_Train_Num; i++)
+                //{
+                //    if (Train_Times[i] > 6 && !complete2[i])
+                //    {
+                //        for (int j = 0; j < Final_Train_Num; j++)
+                //        {
+                //            if (j == i) continue;
+                //            if ( Math.Abs(Final_Train_Center[i].X - Final_Train_Center[j].X) < 50 && Math.Abs(Final_Train_Center[i].Y - Final_Train_Center[j].Y) < 90)
+                //            {
                                 
-                                complete2[j] = true;
-                            }
+                //                complete2[j] = true;
+                //            }
                                 
-                        }
-                        Merge_Center[Merge_num] = Final_Train_Center[i];
-                        Merge_num++;
-                    }
-                }
-                print(Final_Train_Num + " M:" + Merge_num);
-                for (int i = 0; i < Merge_num; i++)
-                {
-                    //print(Merge_Center[i]);
-                    //check_position(treemodel, Merge_Center[i]);
-                }
-              
+                //        }
+                //        Merge_Center[Merge_num] = Final_Train_Center[i];
+                //        Merge_num++;
+                //    }
+                //}
+                //print(Final_Train_Num + " M:" + Merge_num);
+                //for (int i = 0; i < Merge_num; i++)
+                //{
+                //    //print(Merge_Center[i]);
+                //    //check_position(treemodel, Merge_Center[i]);
+                //}
+                
                 for (int i = 0; i < Final_River_Num; i++)
                 {
-                    if (River_Times[i] > 6)
+                    if (River_Times[i] >= 6)
                     {
                         check_position(rivermodel, Final_River_Center[i]);
                     }
 
                 }
+               
+                // Mat []ROI=new Mat[Max_Tree_Num];
+                OpenCvSharp.CPlusPlus.Rect[] train_Rect = new OpenCvSharp.CPlusPlus.Rect[Max_Tree_Num];
+                bool find_train=false;
                 for (int i = 0; i < Final_Tree; i++)
                 {
-                    print(Final_Tree_Center[i]);
-                    if (Tree_Times[i] > 6)
+                    
+                    if (Tree_Times[i] >= 6)
                     {
-                        check_position(treemodel, Final_Tree_Center[i]);
+                        print("trin tree");
+                        Mat ROI = new Mat(image, Final_All_Tree[i]),rot = new Mat();
+                        Cv2.ImShow("ROI", ROI);
+                        train_Rect = tree_cascade.DetectMultiScale(ROI, 1.1, 3, 0, new Size(30, 30));
+                        if (train_Rect.Length != 0) find_train = true;
+
+                        Cv2.Transpose(ROI, rot);
+                        Cv2.Flip(rot, rot, FlipMode.XY);//90
+                        train_Rect = tree_cascade.DetectMultiScale(rot, 1.1, 3, 0, new Size(30, 30));
+                        if (train_Rect.Length != 0) find_train = true;
+
+                        Cv2.Transpose(ROI, rot);
+                        Cv2.Flip(rot, rot, FlipMode.X);//逆90
+                        train_Rect = tree_cascade.DetectMultiScale(rot, 1.1, 3, 0, new Size(30, 30));
+                        if (train_Rect.Length != 0) find_train = true;
+
+                        Cv2.Flip(ROI, ROI, FlipMode.X);//180
+                        train_Rect = tree_cascade.DetectMultiScale(ROI, 1.1, 3, 0, new Size(30, 30));
+                        if (train_Rect.Length != 0) find_train = true;
+
+                        if (find_train)
+                            check_position(treemodel, Final_Tree_Center[i]);
                     }
-                }
-                        //  int num = 0, center_num = 0, River_center_num = 0;
-                        //  bool[][] complete = new bool[10][];
-                        //  bool[][] complete2 = new bool[10][];
-                        //  for (int i = 0; i < 10; i++)
-                        //  {
-                        //      complete2[i] = new bool[10];
-                        //      complete[i] = new bool[10];
-                        //  }
-                        //  //Tree 
-                        //  for (int i = 0; i < 10; i++)
-                        //  {
-                        //      for (int j = 0; j < Tree_num[i]; j++)
-                        //      {
-                        //          num = 0;
-                        //          if (!complete[i][j])
-                        //          {
-                        //              complete[i][j] = true;
-                        //              for (int k = 0; k < 10; k++)
-                        //              {
-                        //                  if (k == i) continue;
-                        //                  for (int l = 0; l < Tree_num[k]; l++)
-                        //                  {
-                        //                      if (!complete[k][l])
-                        //                      {
-                        //                          if (Math.Abs(Tree_Center[i][j].X - Tree_Center[k][l].X) < 10 && Math.Abs(Tree_Center[i][j].Y - Tree_Center[k][l].Y) < 10)
-                        //                          {
-                        //                              complete[k][l] = true;
-                        //                              num++;
-                        //                          }
-                        //                      }
-                        //                  }
-                        //              }
-                        //              if (num >= 3)
-                        //              {
-                        //                  Final_Tree_Center[center_num] = Tree_Center[i][j];
-                        //                  center_num++;
-                        //              }
-                        //          }
-                        //      }
-                        //  }
-
-                        //  //River
-                        //  for (int i = 0; i < 10; i++)
-                        //  {
-                        //      for (int j = 0; j < River_num[i]; j++)
-                        //      {
-                        //          num = 0;
-                        //          if (!complete2[i][j])
-                        //          {
-                        //              complete2[i][j] = true;
-                        //              for (int k = 0; k < 10; k++)
-                        //              {
-                        //                  if (k == i) continue;
-                        //                  for (int l = 0; l < River_num[k]; l++)
-                        //                  {
-                        //                      if (!complete2[k][l])
-                        //                      {
-                        //                          if (Math.Abs(River_Center[i][j].X - River_Center[k][l].X) < 10 && Math.Abs(River_Center[i][j].Y - River_Center[k][l].Y) < 10)
-                        //                          {
-                        //                              complete2[k][l] = true;
-                        //                              num++;
-                        //                          }
-                        //                      }
-                        //                  }
-                        //              }
-                        //              if (num >= 3)
-                        //              {
-                        //                  Final_River_Center[River_center_num] = River_Center[i][j];
-                        //                  River_center_num++;
-                        //              }
-                        //          }
-                        //      }
-                        //  }
-
-                        //  print(Final_Tree);
-                        //   print(Final_River);
-                        //  for (int i = 0; i < center_num; i++)
-                        //  {
-                        //      double pox, poy, ay, bx, cx, cy, a, b;
-                        //      pox = Final_Tree_Center[i].X;
-                        //      poy = Final_Tree_Center[i].Y;
-                        //      ay = 480f;
-                        //      bx = 640f;
-                        //      cx = pox;
-                        //      cy = poy;
-
-                        //      a = cy / ay;
-                        //      b = cx / bx;
-
-                        //      GameObject newtree = (GameObject)Instantiate(treemodel);
-                        //      newtree.transform.parent = imagetarget.transform;
-                        //      newtree.transform.position = new Vector3(zero.transform.position.x + (0.7f * (float)a * 50f), zero.transform.position.y, zero.transform.position.z - (1f * (float)b * 50f));
-                        //      //newtree.SetActive(true);
-                        //      newtree.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
-                        //      print(Final_Tree_Center[i]);
-                        //  }
-                        //  for (int i = 0; i < River_center_num; i++)
-                        //  {
-                        //      double pox, poy, ay, bx, cx, cy, a, b;
-                        //      pox = Final_River_Center[i].X;
-                        //      poy = Final_River_Center[i].Y;
-                        //      ay = 480f;
-                        //      bx = 640f;
-                        //      cx = pox;
-                        //      cy = poy;
-
-                        //      a = cy / ay;
-                        //      b = cx / bx;
-                        //      GameObject newriver = (GameObject)Instantiate(rivermodel);
-                        //      newriver.transform.parent = imagetarget.transform;
-                        //      newriver.transform.position = new Vector3(zero.transform.position.x + (0.7f * (float)a * 50f), -4.19f, zero.transform.position.z - (1f * (float)b * 50f));
-                        //      //newriver.SetActive(true);
-                        //      newriver.transform.localScale = new Vector3(0.002f, 0.002f, 0.002f);
-                        //      print(Final_River_Center[i]);
-                        //  }
-                        end = Time.time;
+                } 
+                end = Time.time;
                 mode = modeType.Draw_Mode;
-                find = false;
+                find = true;
                 if (temp == false)
                 {
                     Hint_2.SetActive(true);
                     temp = true;
                 }
                 print(end - start);
+                
             }
             round++;
 
