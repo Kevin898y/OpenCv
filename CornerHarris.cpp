@@ -1,4 +1,4 @@
-﻿#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <iostream>
 #include <stdio.h>
@@ -7,14 +7,13 @@
 using namespace cv;
 using namespace std;
 const double k = 0.04;
-void cornerHarris_demo(int, void*);
 void MY_CornerHarris(Mat&, Mat&);
 void Draw_Corner(Mat& ,Mat& );
 int main(int, char** argv)
 {
 	Mat cornerMap, src, src_gray;
 	VideoCapture cap;      
-	cap.open(0); // cap.open(1); 
+	cap.open(1); // cap.open(1); 
 	while (cap.isOpened()) 
 	{
 		cap >> src;
@@ -27,17 +26,6 @@ int main(int, char** argv)
 	return(0);
 }
 
-void Draw_Corner(Mat& image, Mat& binary)
-{
-	for (int j = 0; j < binary.rows; j++)
-	{
-		for (int i = 0; i < binary.cols; i++)
-		{
-			if (binary.at<uchar>(j, i))
-				circle(image, Point(i, j), 3, Scalar(0, 255, 0), 1);
-		}
-	}
-}
 void MY_CornerHarris(Mat& src_gray, Mat& Corner_Map){
 	Mat Ix, Iy, Ixx, Iyy, Ixy, corner, dilated, Local_Max;
 	corner.create(src_gray.rows, src_gray.cols, CV_64F);
@@ -81,5 +69,16 @@ void MY_CornerHarris(Mat& src_gray, Mat& Corner_Map){
 	Corner_Map = corner > thr;
 
 	bitwise_and(Corner_Map, Local_Max, Corner_Map);
+}
+void Draw_Corner(Mat& image, Mat& binary)
+{
+	for (int j = 0; j < binary.rows; j++)
+	{
+		for (int i = 0; i < binary.cols; i++)
+		{
+			if (binary.at<uchar>(j, i))
+				circle(image, Point(i, j), 3, Scalar(0, 255, 0), 1);
+		}
+	}
 }
 
